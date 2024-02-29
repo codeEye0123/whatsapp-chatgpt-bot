@@ -1,48 +1,100 @@
-# WhatsApp Chat Bot © Code Eye
-WhatsApp Web Automation using Python  :snake:
+WhatApp OpenAI-API Chatbot
+==============================
 
-***** FOLLOW THE INSTRUCTIONS *****
+[![Build and deploy Python app to Azure Web App - openai-chatbot](https://github.com/simonsanvil/openai-whatsapp-chatbot/actions/workflows/master_openai-chatbot.yml/badge.svg)](https://github.com/simonsanvil/openai-whatsapp-chatbot/actions/workflows/master_openai-chatbot.yml)
 
-● Check whether python is installed in the system 
-  Open the cmd and write : 
-  python -V
-  
-● Check whether pip is installed in the system
-  In cmd type :
-  pip -V
-  
-● Open python IDLE and write the following statement :
-  import pyautogui as p
-  If import is not successful, install the pyautogui library using the command- pip install pyautogui, in cmd.
-  
-● Open WhatsApp Web (https://web.whatsapp.com) and place the mouse cursor on the "Search" box, now dont move the mouse cursor from there and open the IDLE. Don't use the mouse, use Alt+Tab to open IDLE.
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/simonsanvil/openai-whatsapp-chatbot/blob/master/notebooks/chatbot_demo-colab.ipynb)
 
-● Now write the following statement :
-  p.position()
-  Sample output will be like - Point(x=190,y=150)
 
-● Open the WhatsAppChatBot.py in an editor and edit the line 38
-  p.click(put the value of x,put the value of y)
+A chatbot that uses OpenAI's API to reply to incoming text and voice messages from WhatsApp with their GPT3-based language models (Davinci, Ada, Babbage, ...) and to generate images with [DALL-E 2](https://openai.com/dall-e-2/).
 
-● Now open WhatsApp Web, and open a chat which has a last message sent by receiver, move the mouse cursor the top of the last message and then place the cursor there and take the position of the cursor in the same way as explained above in IDLE.
+Requires a valid key to [OpenAI's API](https://openai.com/api/).
 
-● Put the values of x and y in line no. 44
+![](https://i.imgur.com/59v9gFH.png) | ![](https://i.imgur.com/xCJrOZz.png) | ![](https://i.imgur.com/dfluSaY.png)
+:------------:|:-----------:|:-----------:
+   |  | 
 
-● Now move the cursor to the position where the message ends and navigate to the IDLE and take the position of the cursor using p.position() statement.
 
-● Now substract the values of x and y in line no. 44 from the newly obtained x and y values in the previous step.
 
-● Put the resultant x and y values obtained after substraction in line 45
-  p.dragRel(Substracted x value, Substracted y value, 0.5)
+    
+Installation
+------
+```bash
+git clone https://github.com/simonsanvil/openai-whatsapp-chatbot
+pip install -r requirements.txt
+``` 
 
-● I have used the pyttsx3, the Text-to-speech library which will even send a recorded voice message as specfied in the code.
+Requirements
+-----------
 
-● Go to WhatsApp Web, place the mouse cursor on the microphone icon beside type a message box, and in the same way as mentioned above get the position of the mouse cursor the in the IDLE.
+-  python>=3.8
+- A valid [OpenAI API](https://beta.openai.com/) key
 
-● Put the obtained value of x and y in line 136 and line 139. This turns on the recording, meanwhile the text is read and then sends the recording to the receiver.
+Setup and Configuration
+--------------------
 
-● In line 39, type the name of the receiver in the p.typewrite("Name of receiver here\n") statement.
+You need to set the OpenAI API key as an environmental variables or add it to a [.env](https://github.com/laravel/laravel/blob/master/.env.example) file in the working directory where the app will be running:
+```bash
+export OPENAI_API_KEY=[YOUR OPENAI API ACCESS KEY]
+```
 
-● I have added a few basic questions, keep on adding more. There's a lots to improve here, keep thinking and suggest edits. Happy developing and keep codes open source and help others to learn. 
+### To run the Whatsapp chatbot:
+- Have a [Twillio account](https://www.twilio.com/) and setup a [Twilio for Whatsapp messages sandbox](https://www.twilio.com/docs/whatsapp/sandbox) with the `/whatsapp/receive` endpoint of this app as its callback url and `/whatsapp/status` as its status callback url (follow Twillio's tutorial for instructions about how this is done, should only take a few minutes). 
+- Set the following environmental variables: (or add them to the same .env file as the one with the api key).
+```bash
+export TWILLIO_AUTH_TOKEN=[YOUR TWILIO AUTH TOKEN]
+export TWILLIO_ACCOUNT_SID=[YOUR TWILIO ACCOUNT SID]
+export FROM_WHATSAPP_NUMBER=[YOUR ASSIGNED TWILIO WHATSAPP NUMBER] #+14155238886
+```
 
-******MADE WITH :blue_heart: BY CODE EYE******
+The image below shows which boxes you need to fill in when configuring your Twillio Sandbox for Whatsapp:
+
+![](https://i.imgur.com/29vUDK0.png)
+
+
+### Additional config:
+
+- Other environmental variables can be set to control the default parameters of the agent (see [agent.py](/gtp-chatbot/gtp_agent/agent.py) for more details), control configurations of the app, or activate specific features:
+
+```bash
+export MAX_TOKENS=[NUMBER OF MAX TOKENS IN EACH REPLY]
+export CONVERSATION_EXPIRES_MINS=[N MINUTES UNTIL A CONVERSATION IS ERASED FROM MEMORY]
+export ALLOWED_PHONE_NUMBERS=[+1234567890,+1987654321] # Default is any number
+export START_TEMPLATE=[PATH TO A FILE WITH A TEMPLATE FOR THE START OF A CONVERSATION] #data/start_template.txt
+export ASSEMBLYAI_API_KEY=[YOUR ASSEMBLY-AI API KEY]
+```
+- It is also enough to have these variables in a [.env](https://github.com/laravel/laravel/blob/master/.env.example) file in the working directory where the app is running.
+
+The `ASSEMBLYAI_API_KEY` environmental variable is to use [AssemblyAI's API](https://www.assemblyai.com/) to parse and transcribe the audio of incoming voice messages so that the agent can reply to them. If you don't need or want this, you can ignore that variable.
+
+Running the app
+---------
+### Run from the command line:
+
+```bash
+# (Use --help to see all the options):
+python3 -m app.whatsapp
+```
+
+### Run with Docker:
+
+Alternatively the docker container will automatically install all the requirements and run the whatsapp application.
+
+```bash
+# building the image
+docker build -t openai-ws-chatbot .
+
+#running the container
+#It is expected that you have all the required environmental variables in a .env file
+docker run -p 5000:5000 openai-ws-chatbot --env_file=.env
+```
+
+Usage
+-------
+
+After following the instructions in the [Twilio Sandbox for Whatsapp Tutorial](https://www.twilio.com/docs/whatsapp/sandbox) you should be able to join your sandbox and start chatting with the agent inmediately
+
+<img src="https://i.imgur.com/EdYxOWe.jpg" width="450"/>
+
+
+--------
