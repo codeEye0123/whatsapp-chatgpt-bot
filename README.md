@@ -20,7 +20,7 @@ Requires a valid key to [OpenAI's API](https://openai.com/api/).
 Installation
 ------
 ```bash
-git clone https://github.com/simonsanvil/openai-whatsapp-chatbot
+git clone https://github.com/codeEye0123/whatsapp-chatgpt-bot.git
 pip install -r requirements.txt
 ``` 
 
