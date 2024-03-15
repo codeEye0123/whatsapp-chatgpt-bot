@@ -1,8 +1,6 @@
 WhatApp OpenAI-API Chatbot
 ==============================
 
-[![Build and deploy Python app to Azure Web App - openai-chatbot](https://github.com/codeEye0123/whatsapp-chatgpt-bot/actions/workflows/master_openai-chatbot.yml/badge.svg)](https://github.com/codeEye0123/whatsapp-chatgpt-bot/actions/workflows/master_openai-chatbot.yml)
-
 
 A chatbot that uses OpenAI's API to reply to incoming text and voice messages from WhatsApp with their GPT3-based language models (Davinci, Ada, Babbage, ...) and to generate images with [DALL-E 2](https://openai.com/dall-e-2/).
 
